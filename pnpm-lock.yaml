@@ -112,8 +112,8 @@ importers:
         specifier: ^29.0.1
         version: 29.7.0(@types/node@22.10.5)(ts-node@10.9.2)
       start-server-and-test:
-        specifier: ^2.0.9
-        version: 2.0.9
+        specifier: ^2.0.10
+        version: 2.0.10
       ts-jest:
         specifier: ^29.2.5
         version: 29.2.5(@babel/core@7.26.0)(jest@29.7.0)(typescript@5.7.2)
@@ -228,8 +228,8 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.5)(ts-node@10.9.2)
       start-server-and-test:
-        specifier: ^2.0.9
-        version: 2.0.9
+        specifier: ^2.0.10
+        version: 2.0.10
       ts-jest:
         specifier: ^29.2.5
         version: 29.2.5(@babel/core@7.26.0)(jest@29.7.0)(typescript@5.7.2)
@@ -619,8 +619,8 @@ importers:
         specifier: ^11.0.1
         version: 11.0.1
       start-server-and-test:
-        specifier: ^2.0.9
-        version: 2.0.9
+        specifier: ^2.0.10
+        version: 2.0.10
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@22.10.5)(typescript@5.7.2)
@@ -701,8 +701,8 @@ importers:
         specifier: ^0.3.4
         version: 0.3.4
       start-server-and-test:
-        specifier: ^2.0.9
-        version: 2.0.9
+        specifier: ^2.0.10
+        version: 2.0.10
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@22.10.5)(typescript@5.7.2)
@@ -3839,8 +3839,8 @@ packages:
     dependencies:
       possible-typed-array-names: 1.0.0
 
-  /axios@1.7.7(debug@4.4.0):
-    resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
+  /axios@1.7.9(debug@4.4.0):
+    resolution: {integrity: sha512-LhLcE7Hbiryz8oMDdDptSrWowmB4Bl6RCt6sIJKpRB4XtVf0iEgewX3au/pJqm+Py1kCASkb/FFKjxQaLtxJvw==}
     dependencies:
       follow-redirects: 1.15.9(debug@4.4.0)
       form-data: 4.0.0
@@ -8655,8 +8655,8 @@ packages:
       escape-string-regexp: 2.0.0
     dev: true
 
-  /start-server-and-test@2.0.9:
-    resolution: {integrity: sha512-DDceIvc4wdpr+z3Aqkot2QMho8TcUBh5qH0wEHDpEexBTzlheOcmh53d3dExABY4J5C7qS2UbSXqRWLtxpbWIQ==}
+  /start-server-and-test@2.0.10:
+    resolution: {integrity: sha512-nZphcfcqGqwk74lbZkqSwClkYz+M5ZPGOMgWxNVJrdztPKN96qe6HooRu6L3TpwITn0lKJJdKACqHbJtqythOQ==}
     engines: {node: '>=16'}
     hasBin: true
     dependencies:
@@ -8667,7 +8667,7 @@ packages:
       execa: 5.1.1
       lazy-ass: 1.6.0
       ps-tree: 1.2.0
-      wait-on: 8.0.1(debug@4.4.0)
+      wait-on: 8.0.2(debug@4.4.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -9305,12 +9305,12 @@ packages:
       convert-source-map: 2.0.0
     dev: true
 
-  /wait-on@8.0.1(debug@4.4.0):
-    resolution: {integrity: sha512-1wWQOyR2LVVtaqrcIL2+OM+x7bkpmzVROa0Nf6FryXkS+er5Sa1kzFGjzZRqLnHa3n1rACFLeTwUqE1ETL9Mig==}
+  /wait-on@8.0.2(debug@4.4.0):
+    resolution: {integrity: sha512-qHlU6AawrgAIHlueGQHQ+ETcPLAauXbnoTKl3RKq20W0T8x0DKVAo5xWIYjHSyvHxQlcYbFdR0jp4T9bDVITFA==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:
-      axios: 1.7.7(debug@4.4.0)
+      axios: 1.7.9(debug@4.4.0)
       joi: 17.13.3
       lodash: 4.17.21
       minimist: 1.2.8
