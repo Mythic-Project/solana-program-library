@@ -1,7 +1,7 @@
 //! General purpose ephermal_signers utility functions
 
-use solana_program::pubkey::Pubkey;
 use crate::state::proposal_versioned_transaction::VERSIONED_TRANSACTION_BUFFER_SEED;
+use solana_program::pubkey::Pubkey;
 
 /// Seed prefix for EphermalSigners PDAs
 pub const EPHERMAL_SIGNER_SEED: &[u8] = b"ephemeral_signer";

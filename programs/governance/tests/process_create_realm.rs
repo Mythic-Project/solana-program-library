@@ -107,8 +107,6 @@ async fn test_create_realm_for_existing_pda() {
     assert_eq!(realm_cookie.account, realm_account);
 }
 
-
-
 #[tokio::test]
 async fn test_create_realm_with_token_2022() {
     // Arrange
@@ -124,7 +122,6 @@ async fn test_create_realm_with_token_2022() {
 
     assert_eq!(realm_cookie.account, realm_account);
 }
-
 
 #[tokio::test]
 async fn test_create_realm_token_2022_with_non_default_config() {
@@ -207,7 +204,6 @@ async fn test_create_realm_token_2022_for_existing_pda() {
     assert_eq!(realm_cookie.account, realm_account);
 }
 
-
 #[tokio::test]
 async fn test_create_realm_with_token_2022_with_transfer_fees() {
     // Arrange
@@ -220,7 +216,9 @@ async fn test_create_realm_with_token_2022_with_transfer_fees() {
         ..Default::default()
     };
     // Act
-    let realm_cookie = governance_test.with_realm_using_args_token_2022_with_transfer_fees(&realm_setup_args).await;
+    let realm_cookie = governance_test
+        .with_realm_using_args_token_2022_with_transfer_fees(&realm_setup_args)
+        .await;
 
     // Assert
     let realm_account = governance_test

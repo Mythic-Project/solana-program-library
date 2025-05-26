@@ -100,10 +100,6 @@ impl ProposalTransactionBuffer {
             msg!("Current final buffer size: {}", self.final_buffer_size);
             return Err(GovernanceError::FinalBufferSizeExceeded.into());
         }
-        if self.buffer.len() > MAX_BUFFER_SIZE {
-            msg!("Current buffer size: {}", self.buffer.len());
-            return Err(GovernanceError::FinalBufferSizeExceeded.into());
-        }
         if self.buffer.len() > self.final_buffer_size as usize {
             msg!(
                 "Current buffer size: {}, is larger than final buffer size: {}",

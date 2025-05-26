@@ -34,10 +34,10 @@ use {
 
 pub mod addins;
 pub mod cookies;
+pub mod mpl_core_tools;
 pub mod token_2022;
 pub mod tools;
 pub mod versioned_transaction;
-pub mod mpl_core_tools;
 
 /// Program's test bench which captures test context, rent and payer and common
 /// utility functions
@@ -188,6 +188,59 @@ impl ProgramTestBench {
             )
             .unwrap(),
         ];
+
+        self.process_transaction(&instructions, Some(&[mint_keypair]))
+            .await
+            .unwrap();
+    }
+
+    pub async fn create_mint_2022_with_extensions(
+        &mut self,
+        mint_keypair: &Keypair,
+        mint_authority: &Pubkey,
+        freeze_authority: Option<&Pubkey>,
+    ) {
+        let extension_initialization_params = vec![
+            ExtensionInitializationParams::MintCloseAuthority {
+                close_authority: Some(*mint_authority),
+            },
+            ExtensionInitializationParams::PermanentDelegate {
+                delegate: *mint_authority,
+            },
+        ];
+        let extension_types = extension_initialization_params
+            .iter()
+            .map(|e| e.extension())
+            .collect::<Vec<_>>();
+        let space = ExtensionType::try_calculate_account_len::<Mint>(&extension_types).unwrap();
+        let mint_rent = self.rent.minimum_balance(space);
+
+        let mut instructions = vec![system_instruction::create_account(
+            &self.context.payer.pubkey(),
+            &mint_keypair.pubkey(),
+            mint_rent,
+            space as u64,
+            &spl_token_2022::id(),
+        )];
+
+        for params in extension_initialization_params {
+            instructions.push(
+                params
+                    .instruction(&spl_token_2022::id(), &mint_keypair.pubkey())
+                    .unwrap(),
+            );
+        }
+
+        instructions.push(
+            spl_token_2022::instruction::initialize_mint(
+                &spl_token_2022::id(),
+                &mint_keypair.pubkey(),
+                mint_authority,
+                freeze_authority,
+                0,
+            )
+            .unwrap(),
+        );
 
         self.process_transaction(&instructions, Some(&[mint_keypair]))
             .await

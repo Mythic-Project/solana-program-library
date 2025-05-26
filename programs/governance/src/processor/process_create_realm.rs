@@ -13,7 +13,7 @@ use {
                 get_realm_config_address_seeds, resolve_governing_token_config, RealmConfigAccount,
             },
         },
-        tools::{spl_token::create_spl_token_account_signed, structs::Reserved110},
+        tools::{spl_token::{create_spl_token_account_signed, inline_spl_token}, structs::Reserved110},
     },
     solana_program::{
         account_info::{next_account_info, AccountInfo},
@@ -26,13 +26,13 @@ use {
 };
 
 /// Processes CreateRealm instruction
-pub fn process_create_realm(
+pub fn process_create_realm<'a>(
     program_id: &Pubkey,
-    accounts: &[AccountInfo],
+    accounts: &'a [AccountInfo<'a>],
     name: String,
     realm_config_args: RealmConfigArgs,
 ) -> ProgramResult {
-    let account_info_iter = &mut accounts.iter();
+    let account_info_iter = &mut accounts.iter().peekable();
 
     let realm_info = next_account_info(account_info_iter)?; // 0
     let realm_authority_info = next_account_info(account_info_iter)?; // 1
@@ -69,6 +69,18 @@ pub fn process_create_realm(
     let council_token_mint_address = if realm_config_args.use_council_mint {
         let council_token_mint_info = next_account_info(account_info_iter)?; // 8
         let council_token_holding_info = next_account_info(account_info_iter)?; // 9
+        // maintain backwards compatibility using Peekable iterator
+        let council_spl_token_info = if let Some(next_info) = account_info_iter.peek() {
+            // Check if next_info.key is either spl_token_2022::id() or inline_spl_token::ID
+            let is_spl_token = next_info.key == &spl_token_2022::id() || next_info.key == &inline_spl_token::ID;
+            if is_spl_token {
+                next_account_info(account_info_iter)?
+            } else {
+                spl_token_info
+            }
+        } else {
+            spl_token_info
+        }; // 10 if using spl-token-2022
 
         create_spl_token_account_signed(
             payer_info,
@@ -78,7 +90,7 @@ pub fn process_create_realm(
             realm_info,
             program_id,
             system_info,
-            spl_token_info,
+            council_spl_token_info,
             rent_sysvar_info,
             rent,
         )?;
@@ -89,15 +101,14 @@ pub fn process_create_realm(
     };
 
     // Create and serialize RealmConfig
-    let realm_config_info = next_account_info(account_info_iter)?; // 10
-
-    // 11, 12
+    let realm_config_info = next_account_info(account_info_iter)?; // 11
+    // 12, 13
     let community_token_config = resolve_governing_token_config(
         account_info_iter,
         &realm_config_args.community_token_config_args,
     )?;
 
-    // 13, 14
+    // 14, 15
     let council_token_config = resolve_governing_token_config(
         account_info_iter,
         &realm_config_args.council_token_config_args,

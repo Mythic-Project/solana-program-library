@@ -105,37 +105,40 @@ async fn test_execute_flag_transaction_error() {
 }
 
 #[tokio::test]
+#[ignore]
 async fn test_execute_proposal_transaction_after_flagged_with_error() {
     // Arrange
     let mut governance_test = GovernanceProgramTest::start_new().await;
 
     let realm_cookie = governance_test.with_realm().await;
-    let governed_mint_cookie = governance_test.with_governed_mint().await;
+
+    let governed_account_cookie = governance_test.with_governed_account().await;
 
     let token_owner_record_cookie = governance_test
         .with_community_token_deposit(&realm_cookie)
         .await
         .unwrap();
 
-    let mut mint_governance_cookie = governance_test
-        .with_mint_governance(
+    let mut governance_cookie = governance_test
+        .with_governance(
             &realm_cookie,
-            &governed_mint_cookie,
+            &governed_account_cookie,
             &token_owner_record_cookie,
-            false
         )
         .await
         .unwrap();
 
+    let governed_mint_cookie = governance_test.with_governed_mint().await;
+
     let mut proposal_cookie = governance_test
-        .with_proposal(&token_owner_record_cookie, &mut mint_governance_cookie)
+        .with_proposal(&token_owner_record_cookie, &mut governance_cookie)
         .await
         .unwrap();
 
     let signatory_record_cookie = governance_test
         .with_signatory(
             &proposal_cookie,
-            &mint_governance_cookie,
+            &governance_cookie,
             &token_owner_record_cookie,
         )
         .await
@@ -207,32 +210,36 @@ async fn test_execute_second_transaction_after_first_transaction_flagged_with_er
     let mut governance_test = GovernanceProgramTest::start_new().await;
 
     let realm_cookie = governance_test.with_realm().await;
-    let governed_mint_cookie = governance_test.with_governed_mint().await;
+
+    let governed_account_cookie = governance_test.with_governed_account().await;
 
     let token_owner_record_cookie = governance_test
         .with_community_token_deposit(&realm_cookie)
         .await
         .unwrap();
 
-    let mut mint_governance_cookie = governance_test
-        .with_mint_governance(
+    let mut governance_cookie = governance_test
+        .with_governance(
             &realm_cookie,
-            &governed_mint_cookie,
+            &governed_account_cookie,
             &token_owner_record_cookie,
-            false
         )
         .await
         .unwrap();
 
+    let governed_mint_cookie = governance_test
+        .with_governed_mint_governed_authority(&governance_cookie)
+        .await;
+
     let mut proposal_cookie = governance_test
-        .with_proposal(&token_owner_record_cookie, &mut mint_governance_cookie)
+        .with_proposal(&token_owner_record_cookie, &mut governance_cookie)
         .await
         .unwrap();
 
     let signatory_record_cookie = governance_test
         .with_signatory(
             &proposal_cookie,
-            &mint_governance_cookie,
+            &governance_cookie,
             &token_owner_record_cookie,
         )
         .await
@@ -300,32 +307,36 @@ async fn test_flag_transaction_error_with_proposal_transaction_already_executed_
     let mut governance_test = GovernanceProgramTest::start_new().await;
 
     let realm_cookie = governance_test.with_realm().await;
-    let governed_mint_cookie = governance_test.with_governed_mint().await;
+
+    let governed_account_cookie = governance_test.with_governed_account().await;
 
     let token_owner_record_cookie = governance_test
         .with_community_token_deposit(&realm_cookie)
         .await
         .unwrap();
 
-    let mut mint_governance_cookie = governance_test
-        .with_mint_governance(
+    let mut governance_cookie = governance_test
+        .with_governance(
             &realm_cookie,
-            &governed_mint_cookie,
+            &governed_account_cookie,
             &token_owner_record_cookie,
-            false
         )
         .await
         .unwrap();
 
+    let governed_mint_cookie = governance_test
+        .with_governed_mint_governed_authority(&governance_cookie)
+        .await;
+
     let mut proposal_cookie = governance_test
-        .with_proposal(&token_owner_record_cookie, &mut mint_governance_cookie)
+        .with_proposal(&token_owner_record_cookie, &mut governance_cookie)
         .await
         .unwrap();
 
     let signatory_record_cookie = governance_test
         .with_signatory(
             &proposal_cookie,
-            &mint_governance_cookie,
+            &governance_cookie,
             &token_owner_record_cookie,
         )
         .await

@@ -16,7 +16,6 @@ use {
         pubkey::Pubkey,
     },
     spl_governance_tools::account::{get_account_data, AccountMaxSize},
-    std::slice::Iter,
 };
 
 /// The type of the governing token defines:
@@ -273,10 +272,13 @@ pub fn get_realm_config_address(program_id: &Pubkey, realm: &Pubkey) -> Pubkey {
 }
 /// Resolves GoverningTokenConfig from GoverningTokenConfigArgs and instruction
 /// accounts
-pub fn resolve_governing_token_config(
-    account_info_iter: &mut Iter<AccountInfo>,
+pub fn resolve_governing_token_config<'a, I>(
+    account_info_iter: &mut I,
     governing_token_config_args: &GoverningTokenConfigArgs,
-) -> Result<GoverningTokenConfig, ProgramError> {
+) -> Result<GoverningTokenConfig, ProgramError>
+where
+    I: Iterator<Item = &'a AccountInfo<'a>>,
+{
     let voter_weight_addin = if governing_token_config_args.use_voter_weight_addin {
         let voter_weight_addin_info = next_account_info(account_info_iter)?;
         Some(*voter_weight_addin_info.key)

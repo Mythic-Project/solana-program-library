@@ -4,9 +4,13 @@ use {
     crate::{
         error::GovernanceError,
         state::{
-            enums::GovernanceAccountType, governance::get_governance_data, proposal::get_proposal_data_for_governance, proposal_transaction_buffer::{
+            enums::GovernanceAccountType,
+            governance::get_governance_data,
+            proposal::get_proposal_data_for_governance,
+            proposal_transaction_buffer::{
                 get_proposal_transaction_buffer_address_seeds, ProposalTransactionBuffer,
-            }, token_owner_record::get_token_owner_record_data_for_proposal_owner
+            },
+            token_owner_record::get_token_owner_record_data_for_proposal_owner,
         },
     },
     solana_program::{
@@ -43,15 +47,15 @@ pub fn process_create_transaction_buffer(
 
     let payer_info = next_account_info(account_info_iter)?; // 5
     let system_info = next_account_info(account_info_iter)?; // 6
-    let rent_sysvar_info = next_account_info(account_info_iter)?; // 7
-    let rent = &Rent::from_account_info(rent_sysvar_info)?;
+    let rent = &Rent::get()?;
 
+    if !payer_info.is_signer {
+        return Err(GovernanceError::TransactionCreatorMustSign.into());
+    }
     if !proposal_transaction_buffer_info.data_is_empty() {
         return Err(GovernanceError::TransactionBufferAlreadyExists.into());
     }
 
-    // Governance account is no longer used and it's deserialized only to validate
-    // the provided account
     let _governance_data = get_governance_data(program_id, governance_info)?;
 
     let proposal_data =
@@ -75,7 +79,7 @@ pub fn process_create_transaction_buffer(
         final_buffer_size,
         buffer,
     };
-    // Calidate transaction buffer data sizes
+    // Validate transaction buffer data sizes
     proposal_transaction_buffer_data.invariant()?;
 
     create_and_serialize_account_signed::<ProposalTransactionBuffer>(

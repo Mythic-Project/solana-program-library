@@ -97,6 +97,7 @@ impl AccountCookie for GovernedProgramCookie {
     }
 }
 
+#[allow(dead_code)]
 #[derive(Debug)]
 pub struct GovernedMintCookie {
     pub address: Pubkey,
@@ -110,6 +111,7 @@ impl AccountCookie for GovernedMintCookie {
     }
 }
 
+#[allow(dead_code)]
 #[derive(Debug)]
 pub struct GovernedTokenCookie {
     pub address: Pubkey,
@@ -210,7 +212,6 @@ pub struct NativeTreasuryCookie {
     pub address: Pubkey,
     pub account: NativeTreasury,
 }
-
 
 #[allow(dead_code)]
 #[derive(Debug)]

@@ -7,10 +7,7 @@ use {
     crate::{
         state::{
             enums::MintMaxVoterWeightSource,
-            governance::{
-                get_governance_address, get_mint_governance_address,
-                get_program_governance_address, get_token_governance_address, GovernanceConfig,
-            },
+            governance::{get_governance_address, GovernanceConfig},
             native_treasury::get_native_treasury_address,
             program_metadata::get_program_metadata_address,
             proposal::{get_proposal_address, VoteType},
@@ -29,11 +26,10 @@ use {
             token_owner_record::get_token_owner_record_address,
             vote_record::{get_vote_record_address, Vote},
         },
-        tools::{bpf_loader_upgradeable::get_program_data_address, spl_token::inline_spl_token},
+        tools::spl_token::inline_spl_token,
     },
     borsh::{BorshDeserialize, BorshSchema, BorshSerialize},
     solana_program::{
-        bpf_loader_upgradeable,
         instruction::{AccountMeta, Instruction},
         pubkey::Pubkey,
         system_program, sysvar,
@@ -169,37 +165,9 @@ pub enum GovernanceInstruction {
         config: GovernanceConfig,
     },
 
-    /// Creates Program Governance account which governs an upgradable program
-    ///
-    ///   0. `[]` Realm account the created Governance belongs to
-    ///   1. `[writable]` Program Governance account.
-    ///     * PDA seeds: ['program-governance', realm, governed_program]
-    ///   2. `[]` Program governed by this Governance account
-    ///   3. `[writable]` Program Data account of the Program governed by this
-    ///      Governance account
-    ///   4. `[signer]` Current Upgrade Authority account of the Program
-    ///      governed by this Governance account
-    ///   5. `[]` Governing TokenOwnerRecord account (Used only if not signed by
-    ///      RealmAuthority)
-    ///   6. `[signer]` Payer
-    ///   7. `[]` bpf_upgradeable_loader program
-    ///   8. `[]` System program
-    ///   9. `[signer]` Governance authority
-    ///   10. `[]` RealmConfig account.
-    ///     * PDA seeds: ['realm-config', realm]
-    ///   11. `[]` Optional Voter Weight Record
-    CreateProgramGovernance {
-        /// Governance config
-        #[allow(dead_code)]
-        config: GovernanceConfig,
-
-        #[allow(dead_code)]
-        /// Indicates whether Program's upgrade_authority should be transferred
-        /// to the Governance PDA If it's set to false then it can be
-        /// done at a later time However the instruction would validate
-        /// the current upgrade_authority signed the transaction nonetheless
-        transfer_upgrade_authority: bool,
-    },
+    /// Formerly CreateProgramGovernance. Exists for backwards-compatibility.
+    #[deprecated(since = "3.1.1", note = "please use `CreateGovernance` instead")]
+    CreateProgramGovernanceDeprecated,
 
     /// Creates Proposal account for Transactions which will be executed at some
     /// point in the future
@@ -435,69 +403,13 @@ pub enum GovernanceInstruction {
     ///   3+ Any extra accounts that are part of the transaction, in order
     ExecuteTransaction,
 
-    /// Creates Mint Governance account which governs a mint
-    ///
-    ///   0. `[]` Realm account the created Governance belongs to
-    ///   1. `[writable]` Mint Governance account.
-    ///     * PDA seeds: ['mint-governance', realm, governed_mint]
-    ///   2. `[writable]` Mint governed by this Governance account
-    ///   3. `[signer]` Current Mint authority (MintTokens and optionally
-    ///      FreezeAccount)
-    ///   4. `[]` Governing TokenOwnerRecord account (Used only if not signed by
-    ///      RealmAuthority)
-    ///   5. `[signer]` Payer
-    ///   6. `[]` SPL Token or SPL Token 2022 program
-    ///   7. `[]` System program
-    ///   8. `[signer]` Governance authority
-    ///   9. `[]` RealmConfig account.
-    ///     * PDA seeds: ['realm-config', realm]
-    ///   10. `[]` Optional Voter Weight Record
+    /// Formerly CreateMintGovernance. Exists for backwards-compatibility.
     #[deprecated(since = "3.1.1", note = "please use `CreateGovernance` instead")]
-    CreateMintGovernance {
-        #[allow(dead_code)]
-        /// Governance config
-        config: GovernanceConfig,
+    CreateMintGovernanceDeprecated,
 
-        #[allow(dead_code)]
-        /// Indicates whether Mint's authorities (MintTokens, FreezeAccount)
-        /// should be transferred to the Governance PDA. If it's set to
-        /// false then it can be done at a later time. However the
-        /// instruction would validate the current mint authority signed the
-        /// transaction nonetheless
-        transfer_mint_authorities: bool,
-    },
-
-    /// Creates Token Governance account which governs a token account
-    ///
-    ///   0. `[]` Realm account the created Governance belongs to
-    ///   1. `[writable]` Token Governance account.
-    ///     * PDA seeds: ['token-governance', realm, governed_token]
-    ///   2. `[writable]` Token account governed by this Governance account
-    ///   3. `[signer]` Current token account authority (AccountOwner and
-    ///      optionally CloseAccount)
-    ///   4. `[]` Governing TokenOwnerRecord account (Used only if not signed by
-    ///      RealmAuthority)
-    ///   5. `[signer]` Payer
-    ///   6. `[]` SPL Token or SPL Token 2022 program
-    ///   7. `[]` System program
-    ///   8. `[signer]` Governance authority
-    ///   9. `[]` RealmConfig account.
-    ///     * PDA seeds: ['realm-config', realm]
-    ///   10. `[]` Optional Voter Weight Record
+    /// Formerly CreateTokenGovernance. Exists for backwards-compatibility.
     #[deprecated(since = "3.1.1", note = "please use `CreateGovernance` instead")]
-    CreateTokenGovernance {
-        #[allow(dead_code)]
-        /// Governance config
-        config: GovernanceConfig,
-
-        #[allow(dead_code)]
-        /// Indicates whether the token account authorities (AccountOwner and
-        /// optionally CloseAccount) should be transferred to the Governance PDA
-        /// If it's set to false then it can be done at a later time
-        /// However the instruction would validate the current token owner
-        /// signed the transaction nonetheless
-        transfer_account_authorities: bool,
-    },
+    CreateTokenGovernanceDeprecated,
 
     /// Sets GovernanceConfig for a Governance
     ///
@@ -683,7 +595,6 @@ pub enum GovernanceInstruction {
     ///     * PDA seeds: ['transaction_buffer', proposal, creator, buffer_index]
     ///   5. `[signer]` Payer
     ///   6. `[]` System program
-    ///   7. `[]` Rent sysvar
     CreateTransactionBuffer {
         /// Index of the buffer account to seed the account derivation
         buffer_index: u8,
@@ -711,6 +622,7 @@ pub enum GovernanceInstruction {
     },
 
     /// Closes a Transaction Buffer
+    ///   0. `[]` Governance account
     ///   1. `[writable]` Proposal account
     ///   2. `[]` TokenOwnerRecord account of the Proposal owner
     ///   3. `[signer]` Governance Authority (Token Owner or Governance
@@ -732,13 +644,11 @@ pub enum GovernanceInstruction {
     ///   3. `[signer]` Governance Authority (Token Owner or Governance
     ///      Delegate)
     ///   4. `[writable]` ProposalVersionedTransaction, account.
-    ///     * PDA seeds: ['version_transaction', proposal, option_index,
-    ///       instruction_index]
+    ///     * PDA seeds: ['version_transaction', proposal, option_index, transaction_index]
     ///   5. `[writable]` ProposalTransactionBuffer, account.
     ///     * PDA seeds: ['transaction_buffer', proposal, creator, buffer_index]
     ///   6. `[signer]` Payer
     ///   7. `[]` System program
-    ///   8. `[]` Rent sysvar
     InsertVersionedTransactionFromBuffer {
         /// The index of the option the transaction is for
         option_index: u8,
@@ -757,11 +667,9 @@ pub enum GovernanceInstruction {
     ///   3. `[signer]` Governance Authority (Token Owner or Governance
     ///      Delegate)
     ///   4. `[writable]` ProposalVersionedTransaction, account.
-    ///     * PDA seeds: ['version_transaction', proposal, option_index,
-    ///       instruction_index]
+    ///     * PDA seeds: ['version_transaction', proposal, option_index, transaction_index]
     ///   5. `[signer]` Payer
     ///   6. `[]` System program
-    ///   7. `[]` Rent sysvar
     InsertVersionedTransaction {
         /// The index of the option the transaction is for
         option_index: u8,
@@ -821,7 +729,8 @@ pub fn create_realm(
     name: String,
     min_community_weight_to_create_governance: u64,
     community_mint_max_voter_weight_source: MintMaxVoterWeightSource,
-    is_token_2022: bool,
+    is_token_2022_for_community: bool,
+    is_token_2022_for_council: bool,
 ) -> Instruction {
     let realm_address = get_realm_address(program_id, &name);
     let community_token_holding_address =
@@ -835,7 +744,7 @@ pub fn create_realm(
         AccountMeta::new(*payer, true),
         AccountMeta::new_readonly(system_program::id(), false),
         AccountMeta::new_readonly(
-            if is_token_2022 {
+            if is_token_2022_for_community {
                 spl_token_2022::id()
             } else {
                 inline_spl_token::id()
@@ -851,6 +760,14 @@ pub fn create_realm(
 
         accounts.push(AccountMeta::new_readonly(council_token_mint, false));
         accounts.push(AccountMeta::new(council_token_holding_address, false));
+        accounts.push(AccountMeta::new_readonly(
+            if is_token_2022_for_council {
+                spl_token_2022::id()
+            } else {
+                inline_spl_token::id()
+            },
+            false,
+        ));
         true
     } else {
         false
@@ -1069,159 +986,6 @@ pub fn create_governance(
     with_realm_config_accounts(program_id, &mut accounts, realm, voter_weight_record, None);
 
     let instruction = GovernanceInstruction::CreateGovernance { config };
-
-    Instruction {
-        program_id: *program_id,
-        accounts,
-        data: borsh::to_vec(&instruction).unwrap(),
-    }
-}
-
-/// Creates CreateProgramGovernance instruction
-#[allow(clippy::too_many_arguments)]
-pub fn create_program_governance(
-    program_id: &Pubkey,
-    // Accounts
-    realm: &Pubkey,
-    governed_program: &Pubkey,
-    governed_program_upgrade_authority: &Pubkey,
-    token_owner_record: &Pubkey,
-    payer: &Pubkey,
-    create_authority: &Pubkey,
-    voter_weight_record: Option<Pubkey>,
-    // Args
-    config: GovernanceConfig,
-    transfer_upgrade_authority: bool,
-) -> Instruction {
-    let program_governance_address =
-        get_program_governance_address(program_id, realm, governed_program);
-    let governed_program_data_address = get_program_data_address(governed_program);
-
-    let mut accounts = vec![
-        AccountMeta::new_readonly(*realm, false),
-        AccountMeta::new(program_governance_address, false),
-        AccountMeta::new_readonly(*governed_program, false),
-        AccountMeta::new(governed_program_data_address, false),
-        AccountMeta::new_readonly(*governed_program_upgrade_authority, true),
-        AccountMeta::new_readonly(*token_owner_record, false),
-        AccountMeta::new(*payer, true),
-        AccountMeta::new_readonly(bpf_loader_upgradeable::id(), false),
-        AccountMeta::new_readonly(system_program::id(), false),
-        AccountMeta::new_readonly(*create_authority, true),
-    ];
-
-    with_realm_config_accounts(program_id, &mut accounts, realm, voter_weight_record, None);
-
-    let instruction = GovernanceInstruction::CreateProgramGovernance {
-        config,
-        transfer_upgrade_authority,
-    };
-
-    Instruction {
-        program_id: *program_id,
-        accounts,
-        data: borsh::to_vec(&instruction).unwrap(),
-    }
-}
-
-/// Creates CreateMintGovernance
-#[allow(clippy::too_many_arguments)]
-#[deprecated(since = "3.1.1", note = "Please use `create_governance` instead")]
-pub fn create_mint_governance(
-    program_id: &Pubkey,
-    // Accounts
-    realm: &Pubkey,
-    governed_mint: &Pubkey,
-    governed_mint_authority: &Pubkey,
-    token_owner_record: &Pubkey,
-    payer: &Pubkey,
-    create_authority: &Pubkey,
-    voter_weight_record: Option<Pubkey>,
-    // Args
-    config: GovernanceConfig,
-    transfer_mint_authorities: bool,
-    is_token_2022: bool,
-) -> Instruction {
-    let mint_governance_address = get_mint_governance_address(program_id, realm, governed_mint);
-
-    let mut accounts = vec![
-        AccountMeta::new_readonly(*realm, false),
-        AccountMeta::new(mint_governance_address, false),
-        AccountMeta::new(*governed_mint, false),
-        AccountMeta::new_readonly(*governed_mint_authority, true),
-        AccountMeta::new_readonly(*token_owner_record, false),
-        AccountMeta::new(*payer, true),
-        AccountMeta::new_readonly(
-            if is_token_2022 {
-                spl_token_2022::id()
-            } else {
-                inline_spl_token::id()
-            },
-            false,
-        ),
-        AccountMeta::new_readonly(system_program::id(), false),
-        AccountMeta::new_readonly(*create_authority, true),
-    ];
-
-    with_realm_config_accounts(program_id, &mut accounts, realm, voter_weight_record, None);
-
-    let instruction = GovernanceInstruction::CreateMintGovernance {
-        config,
-        transfer_mint_authorities,
-    };
-
-    Instruction {
-        program_id: *program_id,
-        accounts,
-        data: borsh::to_vec(&instruction).unwrap(),
-    }
-}
-
-/// Creates CreateTokenGovernance instruction
-#[allow(clippy::too_many_arguments)]
-#[deprecated(since = "3.1.1", note = "Please use `create_governance` instead")]
-pub fn create_token_governance(
-    program_id: &Pubkey,
-    // Accounts
-    realm: &Pubkey,
-    governed_token: &Pubkey,
-    governed_token_owner: &Pubkey,
-    token_owner_record: &Pubkey,
-    payer: &Pubkey,
-    create_authority: &Pubkey,
-    voter_weight_record: Option<Pubkey>,
-    // Args
-    config: GovernanceConfig,
-    transfer_account_authorities: bool,
-    is_token_2022: bool,
-) -> Instruction {
-    let token_governance_address = get_token_governance_address(program_id, realm, governed_token);
-
-    let mut accounts = vec![
-        AccountMeta::new_readonly(*realm, false),
-        AccountMeta::new(token_governance_address, false),
-        AccountMeta::new(*governed_token, false),
-        AccountMeta::new_readonly(*governed_token_owner, true),
-        AccountMeta::new_readonly(*token_owner_record, false),
-        AccountMeta::new(*payer, true),
-        AccountMeta::new_readonly(
-            if is_token_2022 {
-                spl_token_2022::id()
-            } else {
-                inline_spl_token::id()
-            },
-            false,
-        ),
-        AccountMeta::new_readonly(system_program::id(), false),
-        AccountMeta::new_readonly(*create_authority, true),
-    ];
-
-    with_realm_config_accounts(program_id, &mut accounts, realm, voter_weight_record, None);
-
-    let instruction = GovernanceInstruction::CreateTokenGovernance {
-        config,
-        transfer_account_authorities,
-    };
 
     Instruction {
         program_id: *program_id,
@@ -2214,7 +1978,6 @@ pub fn create_transaction_buffer(
         AccountMeta::new(proposal_transaction_buffer_address, false),
         AccountMeta::new(*payer, true),
         AccountMeta::new_readonly(system_program::id(), false),
-        AccountMeta::new_readonly(sysvar::rent::id(), false),
     ];
 
     let instruction = GovernanceInstruction::CreateTransactionBuffer {
@@ -2346,7 +2109,6 @@ pub fn insert_versioned_transaction_from_buffer(
         AccountMeta::new(proposal_transaction_buffer_address, false),
         AccountMeta::new(*payer, true),
         AccountMeta::new_readonly(system_program::id(), false),
-        AccountMeta::new_readonly(sysvar::rent::id(), false),
     ];
 
     let instruction = GovernanceInstruction::InsertVersionedTransactionFromBuffer {
@@ -2393,7 +2155,6 @@ pub fn insert_versioned_transaction(
         AccountMeta::new(proposal_versioned_tx_address, false),
         AccountMeta::new(*payer, true),
         AccountMeta::new_readonly(system_program::id(), false),
-        AccountMeta::new_readonly(sysvar::rent::id(), false),
     ];
 
     let instruction = GovernanceInstruction::InsertVersionedTransaction {

@@ -109,8 +109,8 @@ pub enum GovernanceAccountType {
     ProposalVersionedTransaction,
 
     /// ProposalTransactionBuffer account which holds instruction buffer which would then create
-    /// a ProposalVersionedTransaction. 
-    ProposalTransactionBuffer
+    /// a ProposalVersionedTransaction.
+    ProposalTransactionBuffer,
 }
 
 /// What state a Proposal is in

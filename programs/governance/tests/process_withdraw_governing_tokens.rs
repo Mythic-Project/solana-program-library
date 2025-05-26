@@ -60,7 +60,6 @@ async fn test_withdraw_community_tokens() {
     );
 }
 
-
 #[tokio::test]
 async fn test_withdraw_council_2022_tokens() {
     // Arrange
@@ -101,18 +100,19 @@ async fn test_withdraw_council_2022_tokens() {
     );
 }
 
-
 #[tokio::test]
 async fn test_withdraw_community_2022_tokens_with_transfer_fees() {
     // Arrange
     let mut governance_test = GovernanceProgramTest::start_new().await;
-    let realm_cookie = governance_test.with_realm_token_2022_with_transfer_fees().await;
+    let realm_cookie = governance_test
+        .with_realm_token_2022_with_transfer_fees()
+        .await;
 
     let token_owner_record_cookie = governance_test
         .with_community_2022_token_deposit_with_transfer_fees(&realm_cookie)
         .await
         .unwrap();
-    
+
     // Act
     governance_test
         .withdraw_community_tokens(&realm_cookie, &token_owner_record_cookie, true)
@@ -137,7 +137,7 @@ async fn test_withdraw_community_2022_tokens_with_transfer_fees() {
         .await;
 
     // token is transfered twice, once for deposit and another for withdraw
-    // for ~100 the fee is 3  
+    // for ~100 the fee is 3
     let token_transfer_times = 2;
     let transfer_fee = 3 * token_transfer_times;
 
@@ -155,18 +155,29 @@ async fn test_withdraw_community_2022_tokens_with_transfer_hook() {
     // the extra meta accounts has to match what spl_transfer_hook_example used.
     // with the only difference is that in here the mint_authority does not sign the transactions.
     // Arrange
-    let mut governance_test = GovernanceProgramTest::start_with_transfer_hook(Some(&transfer_hook_program_id)).await;
-    let realm_cookie = governance_test.with_realm_token_2022_with_transfer_hook(&transfer_hook_program_id).await;
+    let mut governance_test =
+        GovernanceProgramTest::start_with_transfer_hook(Some(&transfer_hook_program_id)).await;
+    let realm_cookie = governance_test
+        .with_realm_token_2022_with_transfer_hook(&transfer_hook_program_id)
+        .await;
     let writable_pubkey = Pubkey::new_unique();
 
     // Act
     let token_owner_record_cookie = governance_test
-        .with_community_2022_token_deposit_with_transfer_hook(&realm_cookie, &transfer_hook_program_id, &writable_pubkey)
+        .with_community_2022_token_deposit_with_transfer_hook(
+            &realm_cookie,
+            &transfer_hook_program_id,
+            &writable_pubkey,
+        )
         .await
         .unwrap();
     // Act
     governance_test
-        .withdraw_community_2022_tokens_with_transfer_hook(&realm_cookie, &token_owner_record_cookie, &transfer_hook_program_id)
+        .withdraw_community_2022_tokens_with_transfer_hook(
+            &realm_cookie,
+            &token_owner_record_cookie,
+            &transfer_hook_program_id,
+        )
         .await
         .unwrap();
 
@@ -192,7 +203,6 @@ async fn test_withdraw_community_2022_tokens_with_transfer_hook() {
         source_account.amount
     );
 }
-
 
 #[tokio::test]
 async fn test_withdraw_council_tokens() {
@@ -253,7 +263,7 @@ async fn test_withdraw_community_tokens_with_owner_must_sign_error() {
         &hacker_token_destination,
         &token_owner_record_cookie.token_owner.pubkey(),
         &realm_cookie.account.community_mint,
-        false
+        false,
     );
 
     withdraw_ix.accounts[3] =
@@ -301,7 +311,7 @@ async fn test_withdraw_community_tokens_with_token_owner_record_address_mismatch
         &hacker_record_cookie.token_source,
         &hacker_record_cookie.token_owner.pubkey(),
         &realm_cookie.account.community_mint,
-        false
+        false,
     );
 
     withdraw_ix.accounts[4] = AccountMeta::new(vote_record_address, false);
@@ -451,7 +461,7 @@ async fn test_withdraw_tokens_with_malicious_holding_account_error() {
         &token_owner_record_cookie.token_source,
         &token_owner_record_cookie.token_owner.pubkey(),
         &realm_cookie.account.community_mint,
-        false
+        false,
     );
 
     withdraw_ix.accounts[1].pubkey = realm_token_account_cookie.address;
@@ -627,7 +637,6 @@ async fn test_withdraw_dormant_community_tokens() {
     assert_eq!(0, token_owner_record.governing_token_deposit_amount);
 }
 
-
 #[tokio::test]
 async fn test_withdraw_community_2022_tokens_with_owner_must_sign_error() {
     // Arrange
@@ -647,7 +656,7 @@ async fn test_withdraw_community_2022_tokens_with_owner_must_sign_error() {
         &hacker_token_destination,
         &token_owner_record_cookie.token_owner.pubkey(),
         &realm_cookie.account.community_mint,
-        true
+        true,
     );
 
     withdraw_ix.accounts[3] =
@@ -695,7 +704,7 @@ async fn test_withdraw_community_2022_tokens_with_token_owner_record_address_mis
         &hacker_record_cookie.token_source,
         &hacker_record_cookie.token_owner.pubkey(),
         &realm_cookie.account.community_mint,
-        true // is_token_2022
+        true, // is_token_2022
     );
 
     withdraw_ix.accounts[4] = AccountMeta::new(vote_record_address, false);
@@ -730,7 +739,11 @@ async fn test_withdraw_governing_token_2022_tokens_with_unrelinquished_votes_err
         .unwrap();
 
     let mut governance_cookie = governance_test
-        .with_governance(&realm_cookie, &governed_account_cookie, &token_owner_record_cookie)
+        .with_governance(
+            &realm_cookie,
+            &governed_account_cookie,
+            &token_owner_record_cookie,
+        )
         .await
         .unwrap();
 
@@ -772,7 +785,11 @@ async fn test_withdraw_governing_token_2022_tokens_after_relinquishing_vote() {
         .unwrap();
 
     let mut governance_cookie = governance_test
-        .with_governance(&realm_cookie, &governed_account_cookie, &token_owner_record_cookie)
+        .with_governance(
+            &realm_cookie,
+            &governed_account_cookie,
+            &token_owner_record_cookie,
+        )
         .await
         .unwrap();
 
@@ -837,7 +854,7 @@ async fn test_withdraw_token_2022_tokens_with_malicious_holding_account_error() 
         &token_owner_record_cookie.token_source,
         &token_owner_record_cookie.token_owner.pubkey(),
         &realm_cookie.account.community_mint,
-        true // is_token_2022
+        true, // is_token_2022
     );
 
     withdraw_ix.accounts[1].pubkey = realm_token_account_cookie.address;
@@ -875,7 +892,11 @@ async fn test_withdraw_governing_token_2022_tokens_with_outstanding_proposals_er
         .unwrap();
 
     let mut governance_cookie = governance_test
-        .with_governance(&realm_cookie, &governed_account_cookie, &token_owner_record_cookie)
+        .with_governance(
+            &realm_cookie,
+            &governed_account_cookie,
+            &token_owner_record_cookie,
+        )
         .await
         .unwrap();
 
@@ -912,7 +933,11 @@ async fn test_withdraw_governing_token_2022_tokens_after_proposal_cancelled() {
         .unwrap();
 
     let mut governance_cookie = governance_test
-        .with_governance(&realm_cookie, &governed_account_cookie, &token_owner_record_cookie)
+        .with_governance(
+            &realm_cookie,
+            &governed_account_cookie,
+            &token_owner_record_cookie,
+        )
         .await
         .unwrap();
 

@@ -24,9 +24,9 @@ use {
 };
 
 /// Processes SetRealmConfig instruction
-pub fn process_set_realm_config(
+pub fn process_set_realm_config<'a>(
     program_id: &Pubkey,
-    accounts: &[AccountInfo],
+    accounts: &'a [AccountInfo<'a>],
     realm_config_args: RealmConfigArgs,
 ) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();

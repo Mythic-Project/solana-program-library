@@ -363,8 +363,10 @@ pub fn get_token_owner_record_data(
             // Add the extra reserved_v2 padding
             reserved_v2: [0; 128],
         }
-    } else {
+    } else if account_type == GovernanceAccountType::TokenOwnerRecordV2 {
         get_account_data::<TokenOwnerRecordV2>(program_id, token_owner_record_info)?
+    } else {
+        return Err(GovernanceError::InvalidAccountType.into());
     };
 
     // If the deserialized account uses the old account layout indicated by the
@@ -450,10 +452,7 @@ pub fn get_token_owner_record_data_for_proposal_owner(
 
 #[cfg(test)]
 mod test {
-    use {
-        super::*,
-        solana_program::stake_history::Epoch,
-    };
+    use {super::*, solana_program::stake_history::Epoch};
 
     fn create_test_token_owner_record() -> TokenOwnerRecordV2 {
         TokenOwnerRecordV2 {
@@ -493,7 +492,6 @@ mod test {
 
         // Act
         let size = borsh::to_vec(&token_owner_record).unwrap().len();
-
 
         // Assert
         assert_eq!(token_owner_record.get_max_size(), Some(size));

@@ -17,6 +17,7 @@ use {
         account_info::{next_account_info, AccountInfo},
         clock::Clock,
         entrypoint::ProgramResult,
+        msg,
         pubkey::Pubkey,
         sysvar::Sysvar,
     },
@@ -41,6 +42,10 @@ pub fn process_close_transaction_buffer(
 
     let beneficiary_info = next_account_info(account_info_iter)?; // 5
 
+    if !beneficiary_info.is_signer {
+        return Err(GovernanceError::TransactionCreatorMustSign.into());
+    }
+
     if proposal_transaction_buffer_info.data_is_empty() {
         return Err(GovernanceError::TransactionBufferAlreadyExists.into());
     }
@@ -53,8 +58,8 @@ pub fn process_close_transaction_buffer(
 
     let proposal_data =
         get_proposal_data_for_governance(program_id, proposal_info, governance_info.key)?;
-    
-    // Check if the proposal is in the draft stage. 
+
+    // Check if the proposal is in the draft stage.
     // even if the transaction buffer has not been inserted into the final transaction proposal
     proposal_data.assert_can_cancel(&governance_data.config, clock.unix_timestamp)?;
 
@@ -65,20 +70,21 @@ pub fn process_close_transaction_buffer(
     )?;
 
     token_owner_record_data.assert_token_owner_or_delegate_is_signer(governance_authority_info)?;
-    let proposal_transaction_buffer_data = get_proposal_transaction_buffer_data_for_proposal(
+    let _proposal_transaction_buffer_data = get_proposal_transaction_buffer_data_for_proposal(
         program_id,
         proposal_transaction_buffer_info,
         proposal_info.key,
     )?;
-    
+
     let proposal_transaction_buffer_address = get_proposal_transaction_buffer_address(
         program_id,
         proposal_info.key,
-        &proposal_transaction_buffer_data.creator,
+        &beneficiary_info.key,
         &buffer_index.to_le_bytes(),
     );
 
     if proposal_transaction_buffer_address != *proposal_transaction_buffer_info.key {
+        msg!("Proposal transaction buffer address does not match");
         return Err(GovernanceError::InvalidAccountFound.into());
     }
 

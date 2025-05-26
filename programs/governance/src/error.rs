@@ -544,13 +544,13 @@ pub enum GovernanceError {
     /// Invalid account signer found in message
     #[error("Invalid account signer found in message")]
     InvalidAccountSigner, // 630
-    
-    /// Invalid writeable account found in message
-    #[error("Invalid writeable account found in message")]
-    InvalidAccountWriteable, // 631
 
-    /// Invalid account found in message
-    #[error("Invalid writeable account found in message")]
+    /// Invalid writable account found in message
+    #[error("Invalid writable account found in message")]
+    InvalidAccountWritable, // 631
+
+    /// Invalid account found
+    #[error("Invalid account found")]
     InvalidAccountFound, // 632
 
     /// Account in lookuptable is missing
@@ -565,12 +565,12 @@ pub enum GovernanceError {
     #[error("TransactionMessage is malformed")]
     InvalidTransactionMessage, // 635
 
-    /// Transaction buffer already created
-    #[error("Transaction buffer already created")]
+    /// Transaction buffer already exists
+    #[error("Transaction buffer already exists")]
     TransactionBufferAlreadyExists, // 636
 
-    /// Versioned Transaction already created
-    #[error("Versioned Transaction already created")]
+    /// Versioned Transaction already exists
+    #[error("Versioned Transaction already exists")]
     VersionedTransactionAlreadyExists, // 637
 
     /// Transaction buffer unauthorized extension
@@ -601,6 +601,13 @@ pub enum GovernanceError {
     #[error("Transaction buffer does not exist")]
     TransactionBufferDoesNotExist, // 644
 
+    /// Invalid account type
+    #[error("Invalid account type")]
+    InvalidAccountType, // 645
+
+    /// Transaction creator must sign
+    #[error("Transaction creator must sign")]
+    TransactionCreatorMustSign, // 646
 }
 
 impl PrintProgramError for GovernanceError {

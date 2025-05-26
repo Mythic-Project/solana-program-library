@@ -37,6 +37,10 @@ pub fn process_extend_transaction_buffer(
 
     let creator_info = next_account_info(account_info_iter)?; // 3
 
+    if !creator_info.is_signer {
+        return Err(GovernanceError::TransactionCreatorMustSign.into());
+    }
+
     // proposal transaction buffer has to be created first
     if proposal_transaction_buffer_info.data_is_empty() {
         return Err(GovernanceError::TransactionBufferDoesNotExist.into());
@@ -69,6 +73,7 @@ pub fn process_extend_transaction_buffer(
     );
 
     if proposal_transaction_buffer_address != *proposal_transaction_buffer_info.key {
+        msg!("Proposal transaction buffer address does not match");
         return Err(GovernanceError::InvalidAccountFound.into());
     }
 
@@ -95,7 +100,7 @@ pub fn process_extend_transaction_buffer(
     }
 
     let buffer_slice_extension = buffer;
-    
+
     // Extend the buffer, log if it panics
     proposal_transaction_buffer_data
         .buffer

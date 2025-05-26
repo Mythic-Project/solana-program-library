@@ -12,6 +12,7 @@ default = ["custom-heap"]
 custom-heap = []
 no-entrypoint = []
 test-sbf = []
+custom-panic = []
 
 [dependencies]
 arrayref = "0.3.7"

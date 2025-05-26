@@ -140,9 +140,11 @@ pub fn get_signatory_record_data(
             // Add the extra reserved_v2 padding
             reserved_v2: [0; 8],
         });
+    } else if account_type == GovernanceAccountType::SignatoryRecordV2 {
+        get_account_data::<SignatoryRecordV2>(program_id, signatory_record_info)
+    } else {
+        return Err(GovernanceError::InvalidAccountType.into());
     }
-
-    get_account_data::<SignatoryRecordV2>(program_id, signatory_record_info)
 }
 
 /// Deserializes SignatoryRecord  and validates its PDA

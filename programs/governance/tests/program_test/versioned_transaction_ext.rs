@@ -1,10 +1,14 @@
-use solana_sdk::address_lookup_table::AddressLookupTableAccount;
 use solana_program::instruction::{AccountMeta, Instruction};
 use solana_program::message::{AccountKeys, CompileError};
 use solana_program::pubkey::Pubkey;
+use solana_sdk::address_lookup_table::AddressLookupTableAccount;
 use spl_governance::state::proposal_versioned_transaction::ProposalTransactionMessage;
-use spl_governance::tools::transaction_message::{CompiledInstruction, MessageAddressTableLookup, TransactionMessage};
-use spl_governance_test_sdk::versioned_transaction::{pda::get_ephemeral_signer_pda, compiled_keys::CompiledKeys};
+use spl_governance::tools::transaction_message::{
+    CompiledInstruction, MessageAddressTableLookup, TransactionMessage,
+};
+use spl_governance_test_sdk::versioned_transaction::{
+    compiled_keys::CompiledKeys, pda::get_ephemeral_signer_pda,
+};
 use std::collections::HashMap;
 
 #[derive(thiserror::Error, Debug)]
@@ -88,17 +92,22 @@ pub trait VaultTransactionMessageExt {
         num_ephemeral_signers: u8,
         program_id: &Pubkey,
     ) -> Result<Vec<AccountMeta>, Error> {
-        let message = ProposalTransactionMessage::try_from(self.as_transaction_message().to_owned())
-            .map_err(|_| Error::InvalidTransactionMessage)?;
+        let message =
+            ProposalTransactionMessage::try_from(self.as_transaction_message().to_owned())
+                .map_err(|_| Error::InvalidTransactionMessage)?;
 
         let ephemeral_signer_pdas: Vec<Pubkey> = (0..num_ephemeral_signers)
             .into_iter()
             .map(|ephemeral_signer_index| {
-                get_ephemeral_signer_pda(transaction_proposal_pda, ephemeral_signer_index, program_id, *transaction_index)
-                    .0
+                get_ephemeral_signer_pda(
+                    transaction_proposal_pda,
+                    ephemeral_signer_index,
+                    program_id,
+                    *transaction_index,
+                )
+                .0
             })
             .collect();
-
 
         let address_lookup_tables = address_lookup_table_accounts
             .into_iter()

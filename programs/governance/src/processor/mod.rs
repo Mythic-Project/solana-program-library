@@ -6,12 +6,9 @@ mod process_cancel_proposal;
 mod process_cast_vote;
 mod process_complete_proposal;
 mod process_create_governance;
-mod process_create_mint_governance;
 mod process_create_native_treasury;
-mod process_create_program_governance;
 mod process_create_proposal;
 mod process_create_realm;
-mod process_create_token_governance;
 mod process_create_token_owner_record;
 mod process_deposit_governing_tokens;
 mod process_execute_transaction;
@@ -40,12 +37,9 @@ use {
     process_cast_vote::*,
     process_complete_proposal::*,
     process_create_governance::*,
-    process_create_mint_governance::*,
     process_create_native_treasury::*,
-    process_create_program_governance::*,
     process_create_proposal::*,
     process_create_realm::*,
-    process_create_token_governance::*,
     process_create_token_owner_record::*,
     process_deposit_governing_tokens::*,
     process_execute_transaction::*,
@@ -66,14 +60,15 @@ use {
     process_withdraw_governing_tokens::*,
     proposal_versioned_transactions::*,
     solana_program::{
-        account_info::AccountInfo, borsh1::try_from_slice_unchecked, entrypoint::ProgramResult, msg, program_error::ProgramError, pubkey::Pubkey
+        account_info::AccountInfo, borsh1::try_from_slice_unchecked, entrypoint::ProgramResult,
+        msg, program_error::ProgramError, pubkey::Pubkey,
     },
 };
 
 /// Processes an instruction
-pub fn process_instruction(
+pub fn process_instruction<'a>(
     program_id: &Pubkey,
-    accounts: &[AccountInfo],
+    accounts: &'a [AccountInfo<'a>],
     input: &[u8],
 ) -> ProgramResult {
     msg!("VERSION:{:?}", env!("CARGO_PKG_VERSION"));
@@ -82,7 +77,6 @@ pub fn process_instruction(
     let instruction: GovernanceInstruction =
         try_from_slice_unchecked(input).map_err(|_| ProgramError::InvalidInstructionData)?;
 
-        
     // Do not dump instruction data into logs
     match instruction {
         GovernanceInstruction::InsertTransaction {
@@ -124,7 +118,6 @@ pub fn process_instruction(
         }
     }
 
-
     match instruction {
         GovernanceInstruction::CreateRealm { name, config_args } => {
             process_create_realm(program_id, accounts, name, config_args)
@@ -141,35 +134,6 @@ pub fn process_instruction(
         GovernanceInstruction::SetGovernanceDelegate {
             new_governance_delegate,
         } => process_set_governance_delegate(program_id, accounts, &new_governance_delegate),
-
-        GovernanceInstruction::CreateProgramGovernance {
-            config,
-            transfer_upgrade_authority,
-        } => process_create_program_governance(
-            program_id,
-            accounts,
-            config,
-            transfer_upgrade_authority,
-        ),
-
-        #[allow(deprecated)]
-        GovernanceInstruction::CreateMintGovernance {
-            config,
-            transfer_mint_authorities,
-        } => {
-            process_create_mint_governance(program_id, accounts, config, transfer_mint_authorities)
-        }
-
-        #[allow(deprecated)]
-        GovernanceInstruction::CreateTokenGovernance {
-            config,
-            transfer_account_authorities,
-        } => process_create_token_governance(
-            program_id,
-            accounts,
-            config,
-            transfer_account_authorities,
-        ),
 
         GovernanceInstruction::CreateGovernance { config } => {
             process_create_governance(program_id, accounts, config)
@@ -194,9 +158,6 @@ pub fn process_instruction(
         ),
         GovernanceInstruction::AddSignatory { signatory } => {
             process_add_signatory(program_id, accounts, signatory)
-        }
-        GovernanceInstruction::Legacy1 => {
-            Err(GovernanceError::InstructionDeprecated.into()) // No-op
         }
         GovernanceInstruction::SignOffProposal {} => {
             process_sign_off_proposal(program_id, accounts)
@@ -326,6 +287,13 @@ pub fn process_instruction(
 
         GovernanceInstruction::RemoveVersionedTransaction {} => {
             process_remove_versioned_transaction(program_id, accounts)
+        }
+        #[allow(deprecated)]
+        GovernanceInstruction::Legacy1
+        | GovernanceInstruction::CreateProgramGovernanceDeprecated
+        | GovernanceInstruction::CreateMintGovernanceDeprecated
+        | GovernanceInstruction::CreateTokenGovernanceDeprecated => {
+            Err(GovernanceError::InstructionDeprecated.into()) // No-op
         }
     }
 }

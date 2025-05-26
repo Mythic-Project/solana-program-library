@@ -204,9 +204,11 @@ pub fn get_vote_record_data(
             vote,
             reserved_v2: [0; 8],
         });
+    } else if account_type == GovernanceAccountType::VoteRecordV2 {
+        get_account_data::<VoteRecordV2>(program_id, vote_record_info)
+    } else {
+        return Err(GovernanceError::InvalidAccountType.into());
     }
-
-    get_account_data::<VoteRecordV2>(program_id, vote_record_info)
 }
 
 /// Deserializes VoteRecord and checks it belongs to the provided Proposal and

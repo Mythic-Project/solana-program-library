@@ -217,11 +217,11 @@ impl TryFrom<TransactionMessage> for ProposalTransactionMessage {
         // Validate that all program ID indices and account indices are within the
         // bounds of the account keys.
         for instruction in &instructions {
-            if usize::from(instruction.program_id_index) > num_all_account_keys {
+            if usize::from(instruction.program_id_index) >= num_all_account_keys {
                 return Err(GovernanceError::InvalidTransactionMessage.into());
             }
             for account_index in &instruction.account_indexes {
-                if usize::from(*account_index) > num_all_account_keys {
+                if usize::from(*account_index) >= num_all_account_keys {
                     return Err(GovernanceError::InvalidTransactionMessage.into());
                 }
             }

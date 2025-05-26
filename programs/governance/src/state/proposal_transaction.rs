@@ -229,9 +229,11 @@ pub fn get_proposal_transaction_data(
             execution_status: proposal_transaction_data_v1.execution_status,
             reserved_v2: [0; 8],
         });
+    } else if account_type == GovernanceAccountType::ProposalTransactionV2 {
+        get_account_data::<ProposalTransactionV2>(program_id, proposal_transaction_info)
+    } else {
+        return Err(GovernanceError::InvalidAccountType.into());
     }
-
-    get_account_data::<ProposalTransactionV2>(program_id, proposal_transaction_info)
 }
 
 ///  Deserializes and returns ProposalTransaction account and checks it belongs

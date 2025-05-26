@@ -7,8 +7,8 @@ mod program_test;
 use {
     crate::program_test::args::*,
     program_test::*,
-    solana_sdk::signature::{Keypair, Signer},
     solana_sdk::pubkey::Pubkey,
+    solana_sdk::signature::{Keypair, Signer},
     spl_governance::{
         error::GovernanceError,
         instruction::deposit_governing_tokens,
@@ -337,7 +337,6 @@ async fn test_deposit_subsequent_council_2022_tokens() {
     assert_eq!(total_deposit_amount, holding_account.amount);
 }
 
-
 #[tokio::test]
 async fn test_deposit_initial_community_2022_tokens_with_transfer_fees() {
     // Arrange
@@ -661,7 +660,6 @@ async fn test_deposit_comunity_tokens_with_cannot_deposit_dormant_tokens_error()
     // Assert
     assert_eq!(err, GovernanceError::CannotDepositDormantTokens.into());
 }
-
 
 #[tokio::test]
 async fn test_deposit_initial_community_2022_tokens_with_owner_must_sign_error() {

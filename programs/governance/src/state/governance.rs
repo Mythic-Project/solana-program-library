@@ -511,7 +511,7 @@ pub fn assert_governance_for_realm(
     Ok(())
 }
 
-/// Returns ProgramGovernance PDA seeds
+/// Returns Legacy ProgramGovernance PDA seeds
 pub fn get_program_governance_address_seeds<'a>(
     realm: &'a Pubkey,
     governed_program: &'a Pubkey,
@@ -526,7 +526,7 @@ pub fn get_program_governance_address_seeds<'a>(
     ]
 }
 
-/// Returns ProgramGovernance PDA address
+/// Returns Legacy ProgramGovernance PDA address
 pub fn get_program_governance_address<'a>(
     program_id: &Pubkey,
     realm: &'a Pubkey,
@@ -539,7 +539,7 @@ pub fn get_program_governance_address<'a>(
     .0
 }
 
-/// Returns MintGovernance PDA seeds
+/// Returns Legacy MintGovernance PDA seeds
 pub fn get_mint_governance_address_seeds<'a>(
     realm: &'a Pubkey,
     governed_mint: &'a Pubkey,
@@ -550,7 +550,7 @@ pub fn get_mint_governance_address_seeds<'a>(
     [b"mint-governance", realm.as_ref(), governed_mint.as_ref()]
 }
 
-/// Returns MintGovernance PDA address
+/// Returns Legacy MintGovernance PDA address
 pub fn get_mint_governance_address<'a>(
     program_id: &Pubkey,
     realm: &'a Pubkey,
@@ -563,7 +563,7 @@ pub fn get_mint_governance_address<'a>(
     .0
 }
 
-/// Returns TokenGovernance PDA seeds
+/// Returns Legacy TokenGovernance PDA seeds
 pub fn get_token_governance_address_seeds<'a>(
     realm: &'a Pubkey,
     governed_token: &'a Pubkey,
@@ -574,7 +574,7 @@ pub fn get_token_governance_address_seeds<'a>(
     [b"token-governance", realm.as_ref(), governed_token.as_ref()]
 }
 
-/// Returns TokenGovernance PDA address
+/// Returns Legacy TokenGovernance PDA address
 pub fn get_token_governance_address<'a>(
     program_id: &Pubkey,
     realm: &'a Pubkey,
@@ -729,7 +729,6 @@ mod test {
 
         // Act
         let size = borsh::to_vec(&governance_data).unwrap().len();
-
 
         // Assert
         assert_eq!(governance_data.get_max_size(), Some(size));
