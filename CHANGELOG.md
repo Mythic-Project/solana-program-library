@@ -2,9 +2,10 @@
 
 ## v3.1.2 - 
 
-- Add deprecated warning for create_mint_governance() and create_token_governance() (it will be removed in v4.0.0)
+- Removedcreate_mint_governance(), create_program_governance(), and create_token_governance()
 - Add SPL Token 2022 support
 - Add VersionedTransaction support for proposals
+- `create_realms()` now supports different token standards for council_mint and community_mint
 
 ## v3.1.1 - 25 Apr 2022
 
