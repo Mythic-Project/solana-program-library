@@ -49,6 +49,7 @@ impl<'a, 'info> ExecutableTransactionMessage<'a, 'info> {
         native_treasury_pubkey: &'a Pubkey,
         governance_pubkey: &'a Pubkey,
         ephemeral_signer_pdas: &'a [Pubkey],
+        proposal_voting_at_slot: u64
     ) -> Result<Self, ProgramError> {
         // CHECK: `address_lookup_table_account_infos` must be valid
         // `AddressLookupTable`s         and be the ones mentioned in
@@ -144,6 +145,11 @@ impl<'a, 'info> ExecutableTransactionMessage<'a, 'info> {
             let lookup_table = AddressLookupTable::deserialize(lookup_table_data)
                 .map_err(|_| GovernanceError::InvalidLookupTableAccountKey)?;
 
+            // CHECK: if the lookup table account is updated/extended after the vote has started
+            // reject the transaction and return an error
+            if lookup_table.meta.last_extended_slot > proposal_voting_at_slot {
+                return Err(GovernanceError::LookupTableAccountHasBeenAltered.into());
+            }
             // Accounts listed as writable in lookup, should be loaded as writable.
             for (i, index_in_lookup_table) in lookup.writable_indexes.iter().enumerate() {
                 // Check the modifiers.

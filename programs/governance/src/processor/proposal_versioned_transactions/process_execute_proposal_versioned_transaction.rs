@@ -104,6 +104,7 @@ pub fn process_execute_versioned_transaction(
         &treasury_address,
         &governance_pubkey,
         &ephemeral_signer_keys,
+        proposal_data.voting_at_slot.unwrap()
     )?;
 
     // Protected accounts that cannot be used in execute_message()

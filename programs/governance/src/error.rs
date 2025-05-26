@@ -608,6 +608,10 @@ pub enum GovernanceError {
     /// Transaction creator must sign
     #[error("Transaction creator must sign")]
     TransactionCreatorMustSign, // 646
+    
+    /// Lookup Table Account has been extended after vote has started
+    #[error("Lookup Table Account has been extended after vote has started")]
+    LookupTableAccountHasBeenAltered, // 647
 }
 
 impl PrintProgramError for GovernanceError {
