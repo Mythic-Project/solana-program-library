@@ -10,8 +10,9 @@ For example it can be used as an authority provider for mints, token accounts an
 we may want a voting population to vote on disbursement of funds collectively.
 It can also control upgrades of itself and other programs through democratic means.
 
-In the simplest form the program can be used for Multisig control over a shared wallet (treasury account) or as
-a Multisig upgrade authority for Solana programs
+In the simplest form, the program can be used for multisig control over a shared wallet (treasury account) or as a multisig upgrade authority for Solana programs.
+
+---
 
 ## Architecture
 
@@ -65,6 +66,10 @@ There are two UIs available which showcase the programs capabilities:
 
 [@solana/spl-governance](https://www.npmjs.com/package/@solana/spl-governance)
 
+## Governance Plugins
+
+The [Mythic-Project Governance Program Library](https://github.com/Mythic-Project/governance-program-library) provides a suite of plugins that communities can use to extend SPL Governance functionality.
+
 ## Documentation and Help
 
 Program and UI documentation: [spl-governance-docs](https://docs.realms.today)
@@ -76,7 +81,56 @@ Discord server: [spl-governance-discord](https://discord.gg/VsPbrK2hJk)
 The diagram below shows an illustrative configuration of the program accounts when used to control upgrades
 of multiple programs through proposals
 
-![Accounts diagram](./resources/governance-accounts.jpg)
+
+#### Governance Program Account Structure (Diagram)
+
+Below is a conceptual diagram of the main accounts involved in SPL Governance:
+
+```
++-------------------+
+|    Realm Account  |
++-------------------+
+          |
+          v
++-------------------+         +-------------------+
+|  Governance Acct  |<------->|  Governed Account |
++-------------------+         +-------------------+
+          |
+          v
++-------------------+
+|   Proposal Acct   |
++-------------------+
+          |
+          v
++-------------------+
+| Proposal Tx Acct  |
++-------------------+
+          |
+          v
++---------------------------+
+| Versioned Transaction(s)  |
++---------------------------+
+          |
+          v
++-------------------+
+|   Vote Record     |
++-------------------+
+```
+Other key accounts:
+- Token Owner Record (links voter to their tokens and voting power)
+- Signatory Record (tracks proposal signers)
+- Treasury Account (for managing DAO assets)
+- The **Realm Account** is the top-level container, representing the DAO and its community/council tokens.
+- **Governance Accounts** are created for each asset or program the DAO wants to govern.
+- **Governed Accounts** are the actual Solana accounts (e.g., mints, treasuries, programs) under governance control.
+- **Proposal Accounts** are created for each governance action (e.g., upgrade, transfer funds).
+- **Proposal Transaction Accounts** store the instructions to be executed if the proposal passes.
+- **Versioned Transactions**: Proposal Transactions can leverage Solana's versioned transaction format, allowing for more flexible and future-proof governance workflows. Each Proposal Tx Acct may contain or reference one or more versioned transactions.
+- **Vote Records** track how each voter voted on a proposal.
+- **Token Owner Records** link users to their deposited tokens and voting power.
+- **Signatory Records** track who is required to sign off on a proposal.
+
+---
 
 ### Realm account
 
@@ -86,34 +140,6 @@ For example a trading protocol can issue a governance token and use it to create
 
 Once a realm is created voters can deposit Governing tokens (Community or Council) to the realm and
 use the deposited amount as their voting weight to vote on Proposals within that realm.
-
-### Program Governance account
-
-The basic building block of governance to update programs is the ProgramGovernance account.
-It ties a governed Program ID and holds configuration options defining governance rules.
-The governed Program ID is used as the seed for a [Program Derived Address](https://docs.solana.com/developing/programming-model/calling-between-programs#program-derived-addresses),
-and this program derived address is what is used as the address of the Governance account for your Program ID.
-
-What this means is that there can only ever be ONE Governance account for a given Program.
-The governance program validates at creation time of the Governance account that the current upgrade authority of the program
-taken under governance signed the transaction. Optionally `CreateProgramGovernance` instruction can also transfer `upgrade_authority`
-of the governed program to the Governance PDA at the creation time of the Governance account.
-
-### Mint Governance account
-
-A mint governance account allows a mint authority to setup governance over an SPL Mint account.
-The Governance program validates at creation time that the current mint authority signed the transaction to
-create the governance and optionally can transfer the authority to the Governance account.
-Once setup the Mint Governance allows governance participants to create Proposals which execute mint instructions for
-the governed Mint.
-
-### Token Governance account
-
-A token governance account allows a token account owner to setup governance over an SPL Token account.
-The Governance program validates at creation time the current owner signed the transaction to
-create the governance and optionally can transfer the owner to the Governance account.
-Once setup the Token Governance allows participants to create Proposals to execute transfer instructions
-from the governed token account.
 
 ### How does the authority work?
 
@@ -193,10 +219,42 @@ the council can be removed from the DAO through a community vote.
 The Council can also be used for protocols and communities which haven't launched their token yet.
 In such cases the DAO can be setup with the yet to launch token and the Council which would governed
 the DAO until the token is distributed.
+## New Features
+
+- **Token-2022 Support**: SPL Governance now supports [Token-2022](https://spl.solana.com/token-2022), enabling advanced token features such as transfer fees, interest-bearing tokens, and more. This allows DAOs to govern and interact with Token-2022 assets natively.
+- **Versioned Transactions**: The program supports Solana's versioned transactions, allowing DAOs to leverage extended transaction formats and future-proof their governance workflows with enhanced flexibility and scalability.
+
+## Code Structure
+
+- `src/` — Main source code for the governance program.
+  - `processor/` — Contains modular processor files for each instruction (e.g., `process_create_governance.rs`, `process_cast_vote.rs`).
+  - `addins/` — Modules for extending governance functionality (e.g., voter weight, max voter weight).
+  - `error.rs` — Centralized error definitions and handling.
+  - `instruction.rs` — Instruction definitions for the program.
+  - `entrypoint.rs`, `lib.rs` — Entrypoint and library setup.
+- `tests/` — Comprehensive tests for governance logic and instructions.
+- `Cargo.toml`, `Xargo.toml` — Rust build configuration files.
+
 
 ### Proposal Workflow
 
 ![Proposal Workflow](./resources/governance-workflow.jpg)
+
+## New Features
+
+- **Token-2022 Support**: SPL Governance now supports [Token-2022](https://spl.solana.com/token-2022), enabling advanced token features such as transfer fees, interest-bearing tokens, and more. This allows DAOs to govern and interact with Token-2022 assets natively.
+- **Versioned Transactions**: The program supports Solana's versioned transactions, allowing DAOs to leverage extended transaction formats and future-proof their governance workflows with enhanced flexibility and scalability.
+
+## Code Structure
+
+- `src/` — Main source code for the governance program.
+  - `processor/` — Contains modular processor files for each instruction (e.g., `process_create_governance.rs`, `process_cast_vote.rs`).
+  - `addins/` — Modules for extending governance functionality (e.g., voter weight, max voter weight).
+  - `error.rs` — Centralized error definitions and handling.
+  - `instruction.rs` — Instruction definitions for the program.
+  - `entrypoint.rs`, `lib.rs` — Entrypoint and library setup.
+- `tests/` — Comprehensive tests for governance logic and instructions.
+- `Cargo.toml`, `Xargo.toml` — Rust build configuration files.
 
 ## Audit
 
