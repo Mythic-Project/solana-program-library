@@ -21,7 +21,7 @@ serde = { version = "1.0.217", optional = true }
 solana-decode-error = "2.1.0"
 solana-msg = "2.1.0"
 solana-program-error = "2.1.0"
-solana-program-option = "2.1.0"
+solana-program-option = "3.0.0"
 solana-pubkey = "2.1.0"
 solana-zk-sdk = "2.1.0"
 thiserror = "2.0"
