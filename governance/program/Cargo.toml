@@ -36,4 +36,5 @@ spl-governance-addin-mock = { version = "0.1.3", path ="../addin-mock/program"}
 
 
 [lib]
+name = "governance"
 crate-type = ["cdylib", "lib"]
