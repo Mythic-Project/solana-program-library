@@ -42,7 +42,7 @@
     "test:e2e": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" start-server-and-test 'solana-test-validator --bpf-program namesLPneVptA9Z5rqUDD9tMTWEJwofgaYwp8cawRkX ../../target/deploy/spl_name_service.so --reset --quiet' http://127.0.0.1:8899/health 'jest test/e2e'"
   },
   "devDependencies": {
-    "@jest/globals": "^29.7.0",
+    "@jest/globals": "^30.2.0",
     "@types/bn.js": "^5.1.6",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.5",
