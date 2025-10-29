@@ -34,7 +34,7 @@
         "@solana/buffer-layout": "^4.0.0",
         "@solana/buffer-layout-utils": "^0.2.0",
         "bigint-buffer": "^1.1.5",
-        "bignumber.js": "^9.0.1"
+        "bignumber.js": "^9.3.1"
     },
     "peerDependencies": {
         "@solana/spl-token": "0.4.9",
