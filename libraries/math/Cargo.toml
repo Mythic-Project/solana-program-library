@@ -13,7 +13,7 @@ uint = "0.10"
 
 [dev-dependencies]
 proptest = "1.6.0"
-libm = "0.2.11"
+libm = "0.2.16"
 
 [package.metadata.docs.rs]
 targets = ["x86_64-unknown-linux-gnu"]
