@@ -10,7 +10,7 @@ version = "0.2.0"
 
 [dependencies]
 clap = { version = "3", features = ["cargo"] }
-futures-util = "0.3.31"
+futures-util = "0.3.32"
 solana-clap-v3-utils = "2.1.0"
 solana-cli-config = "2.1.0"
 solana-client = "2.1.0"
