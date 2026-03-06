@@ -29,7 +29,7 @@ spl-type-length-value = { version = "0.7.0", path = "../type-length-value" }
 thiserror = "2.0"
 
 [dev-dependencies]
-futures = "0.3.31"
+futures = "0.3.32"
 futures-util = "0.3"
 solana-client = "2.1.0"
 solana-program-test = "2.1.0"
