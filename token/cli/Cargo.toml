@@ -41,7 +41,7 @@ spl-token-metadata-interface = { version = "0.6.0", path = "../../token-metadata
 spl-token-group-interface = { version = "0.5.0", path = "../../token-group/interface" }
 spl-memo = { version = "6.0", features = ["no-entrypoint"] }
 strum = "0.26"
-strum_macros = "0.26"
+strum_macros = "0.28"
 tokio = "1.42"
 
 [dev-dependencies]
