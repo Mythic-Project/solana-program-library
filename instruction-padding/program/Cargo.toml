@@ -18,7 +18,7 @@ solana-account-info = "2.1.0"
 solana-cpi = "2.1.0"
 solana-instruction = { version = "2.1.0", features = ["std"] }
 solana-program-entrypoint = "2.1.0"
-solana-program-error = "2.1.0"
+solana-program-error = "3.0.1"
 solana-pubkey = "2.1.0"
 
 [dev-dependencies]
