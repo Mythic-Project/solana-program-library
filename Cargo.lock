@@ -51,7 +51,7 @@ checksum = "b169f7a6d4742236a0a00c541b845991d0ac43e546831af1249753ab4c3aa3a0"
 dependencies = [
  "cfg-if 1.0.0",
  "cipher",
- "cpufeatures",
+ "cpufeatures 0.2.12",
 ]
 
 [[package]]
@@ -1346,6 +1346,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "cpufeatures"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8b2a41393f66f16b0823bb79094d54ac5fbd34ab292ddafb9a0456ac9f87d201"
+dependencies = [
+ "libc",
+]
+
+[[package]]
 name = "crc32fast"
 version = "1.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1449,13 +1458,28 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "97fb8b7c4503de7d6ae7b42ab72a5a59857b4c937ec27a3d4539dba95b5ab2be"
 dependencies = [
  "cfg-if 1.0.0",
- "cpufeatures",
+ "cpufeatures 0.2.12",
  "curve25519-dalek-derive",
  "digest 0.10.7",
- "fiat-crypto",
+ "fiat-crypto 0.2.9",
  "rand_core 0.6.4",
  "rustc_version",
  "serde",
+ "subtle",
+ "zeroize",
+]
+
+[[package]]
+name = "curve25519-dalek"
+version = "5.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b5eed333089e2e1c1ac8c6c0398e5e2497b4c9926ca6d0365ed1e099afa5bc23"
+dependencies = [
+ "cfg-if 1.0.0",
+ "cpufeatures 0.3.0",
+ "curve25519-dalek-derive",
+ "fiat-crypto 0.3.0",
+ "rustc_version",
  "subtle",
  "zeroize",
 ]
@@ -1990,6 +2014,12 @@ name = "fiat-crypto"
 version = "0.2.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "28dea519a9695b9977216879a3ebfddf92f1c08c05d984f8996aecd6ecdc811d"
+
+[[package]]
+name = "fiat-crypto"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "64cd1e32ddd350061ae6edb1b082d7c54915b5c672c389143b9a63403a109f24"
 
 [[package]]
 name = "filetime"
@@ -2973,7 +3003,7 @@ version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f6d5ed8676d904364de097082f4e7d240b571b67989ced0240f08b7f966f940"
 dependencies = [
- "cpufeatures",
+ "cpufeatures 0.2.12",
 ]
 
 [[package]]
@@ -3902,7 +3932,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9d1fe60d06143b2430aa532c94cfe9e29783047f06c0d7fd359a9a51b729fa25"
 dependencies = [
  "cfg-if 1.0.0",
- "cpufeatures",
+ "cpufeatures 0.2.12",
  "opaque-debug 0.3.0",
  "universal-hash",
 ]
@@ -4995,7 +5025,7 @@ checksum = "99cd6713db3cf16b6c84e06321e049a9b9f699826e16096d23bbcc44d15d51a6"
 dependencies = [
  "block-buffer 0.9.0",
  "cfg-if 1.0.0",
- "cpufeatures",
+ "cpufeatures 0.2.12",
  "digest 0.9.0",
  "opaque-debug 0.3.0",
 ]
@@ -5007,7 +5037,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "028f48d513f9678cda28f6e4064755b3fbb2af6acd672f2c209b62323f7aea0f"
 dependencies = [
  "cfg-if 1.0.0",
- "cpufeatures",
+ "cpufeatures 0.2.12",
  "digest 0.10.7",
 ]
 
@@ -5018,7 +5048,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e3bf829a2d51ab4a5ddf1352d8470c140cadc8301b2ae1789db023f01cedd6ba"
 dependencies = [
  "cfg-if 1.0.0",
- "cpufeatures",
+ "cpufeatures 0.2.12",
  "digest 0.10.7",
 ]
 
@@ -5030,7 +5060,7 @@ checksum = "4d58a1e1bf39749807d89cf2d98ac2dfa0ff1cb3faa38fbb64dd88ac8013d800"
 dependencies = [
  "block-buffer 0.9.0",
  "cfg-if 1.0.0",
- "cpufeatures",
+ "cpufeatures 0.2.12",
  "digest 0.9.0",
  "opaque-debug 0.3.0",
 ]
@@ -5042,7 +5072,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "793db75ad2bcafc3ffa7c68b215fee268f537982cd901d132f89c6343f3a3dc8"
 dependencies = [
  "cfg-if 1.0.0",
- "cpufeatures",
+ "cpufeatures 0.2.12",
  "digest 0.10.7",
 ]
 
@@ -8707,7 +8737,7 @@ version = "0.2.0"
 dependencies = [
  "base64 0.22.1",
  "bytemuck",
- "curve25519-dalek 4.1.3",
+ "curve25519-dalek 5.0.0",
  "solana-curve25519",
  "solana-zk-sdk",
  "spl-token-confidential-transfer-proof-generation",
@@ -8729,7 +8759,7 @@ dependencies = [
 name = "spl-token-confidential-transfer-proof-generation"
 version = "0.2.0"
 dependencies = [
- "curve25519-dalek 4.1.3",
+ "curve25519-dalek 5.0.0",
  "solana-zk-sdk",
  "thiserror 2.0.9",
 ]
@@ -8738,7 +8768,7 @@ dependencies = [
 name = "spl-token-confidential-transfer-proof-test"
 version = "0.0.1"
 dependencies = [
- "curve25519-dalek 4.1.3",
+ "curve25519-dalek 5.0.0",
  "solana-zk-sdk",
  "spl-token-confidential-transfer-proof-extraction",
  "spl-token-confidential-transfer-proof-generation",
