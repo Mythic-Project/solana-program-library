@@ -8,7 +8,7 @@ license = "Apache-2.0"
 edition = "2021"
 
 [dependencies]
-base64 = "0.22.1"
+base64 = "0.23.0"
 bytemuck = "1.21.0"
 solana-curve25519 = "2.1.0"
 solana-zk-sdk = "2.1.0"
