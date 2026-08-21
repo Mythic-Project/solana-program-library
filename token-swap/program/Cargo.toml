@@ -15,7 +15,7 @@ fuzz = ["arbitrary", "roots"]
 [dependencies]
 arrayref = "0.3.9"
 enum_dispatch = "0.3.13"
-num-derive = "0.4"
+num-derive = "0.5"
 num-traits = "0.2"
 solana-program = "2.1.0"
 spl-math = { version = "0.3", path = "../../libraries/math" }

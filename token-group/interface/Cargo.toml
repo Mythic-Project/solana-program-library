@@ -9,7 +9,7 @@ edition = "2021"
 
 [dependencies]
 bytemuck = "1.21.0"
-num-derive = "0.4"
+num-derive = "0.5"
 num-traits = "0.2"
 solana-decode-error = "2.1.0"
 solana-instruction = "2.1.0"

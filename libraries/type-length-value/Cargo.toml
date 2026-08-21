@@ -13,7 +13,7 @@ derive = ["dep:spl-type-length-value-derive"]
 
 [dependencies]
 bytemuck = { version = "1.21.0", features = ["derive"] }
-num-derive = "0.4"
+num-derive = "0.5"
 num-traits = "0.2"
 solana-account-info = "2.1.0"
 solana-decode-error = "2.1.0"

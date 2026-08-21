@@ -14,7 +14,7 @@ test-sbf = []
 [dependencies]
 arrayref = "0.3.9"
 bytemuck = "1.21.0"
-num-derive = "0.4"
+num-derive = "0.5"
 num-traits = "0.2"
 solana-program = "2.1.0"
 spl-token = { version = "7.0", path = "../../token/program", features = [ "no-entrypoint" ] }

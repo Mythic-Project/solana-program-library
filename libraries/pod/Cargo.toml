@@ -15,7 +15,7 @@ borsh = ["dep:borsh"]
 borsh = { version = "1.5.3", optional = true }
 bytemuck = { version = "1.21.0" }
 bytemuck_derive = { version = "1.8.1" }
-num-derive = "0.4"
+num-derive = "0.5"
 num-traits = "0.2"
 serde = { version = "1.0.217", optional = true }
 solana-decode-error = "2.1.0"
